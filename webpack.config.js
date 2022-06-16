@@ -1,13 +1,47 @@
 const webpack = require("webpack");
 const path = require('path')
 const getAbsolutePath = (pathDir) => path.resolve(__dirname, pathDir)
+const HtmlWebpackPlugin = require('html-webpack-plugin')
 const MiniCssExtractPlugin = require('mini-css-extract-plugin')
+const os = require('os')
+const CssMinimizerPlugin = require('css-minimizer-webpack-plugin')
+const { CleanWebpackPlugin } = require('clean-webpack-plugin')
+
 
 module.exports = (_env, argv) => {
   const isProd = argv.mode === 'production'
   const isDev = !isProd
-
+  
   return {
+
+    // 개발 서버 설정
+    devServer: {
+      // dist 디렉토리를 웹 서버의 기본 호스트 위치로 설정
+      static: {
+        directory: path.resolve(__dirname, './dist'),
+      },
+      // 인덱스 파일 설정
+      // index: 'index.html',
+      // 포트 번호 설정
+      port: 9000,
+      // 핫 모듈 교체(HMR) 활성화 설정
+      hot: true,
+      // gzip 압축 활성화
+      compress: true,
+      devMiddleware: {
+        // dist 디렉토리에 실제 파일 생성
+        writeToDisk: true,
+      },
+      // History 라우팅 대체 사용 설정
+      historyApiFallback: true,
+      // 개발 서버 자동 실행 설정
+      open: true,
+      // 오류 표시 설정
+      client: {
+        overlay: true,
+      },
+    },
+
     // 기본 구성
     entry: {
       main: './src/index.js',
@@ -48,9 +82,29 @@ module.exports = (_env, argv) => {
         chunkFilename: 'assets/css/[name].[contenthash:8].chunk.css',
       }),
 
-      // 환경 변수 플러그인 인스턴스 생성
+      // 환경 변수 플러그인 인스턴스 생성 npm i cross-env 설치
       new webpack.EnvironmentPlugin({
         NODE_ENV: isDev ? 'development' : 'production'
+      }),
+
+      // 플러그인 인스턴스 생성
+      new HtmlWebpackPlugin({
+        template: getAbsolutePath('public/index.html'),
+        inject: true
+      }),
+      // 웹펙 빌드 결과물 정리 플러그인 인스턴스 생성
+      new CleanWebpackPlugin({
+        // 플러그인 옵션 셜정
+        // dry 기본 값: false
+        // dry: true,
+        // verbose 기본 값: false
+        verbose: true,
+        // cleanOnceBeforeBuildPatterns 기본 값: ['**/*']
+        cleanOnceBeforeBuildPatterns: [
+          '**/*',
+          // build 폴더 안의 모든 것을 지우도록 설정
+          path.resolve(process.cwd(), 'build/**/*')
+        ]
       }),
     ],
     resolve: {
@@ -62,6 +116,40 @@ module.exports = (_env, argv) => {
         '@pages': getAbsolutePath('src/pages/'),
       },
     },
+
+
+    // 빌드 최적화 구성
+    optimization: {
+      minimize: true,
+      minimizer: [
+        new CssMinimizerPlugin({
+          parallel: os.cpus().length - 1
+        }),
+      ],
+      splitChunks: {
+        chunks: 'all',
+        minSize: 0,
+        minRemainingSize: 0,
+        maxSize: 0,
+        minChunks: 1,
+        maxAsyncRequests: 30,
+        maxInitialRequests: 20,
+        enforceSizeThreshold: 50000,
+        cacheGroups: {
+          defaultVendors: {
+            test: /[\\/]node_modules[\\/]/,
+            priority: -10,
+            reuseExistingChunk: true,
+          },
+          default: {
+            minChunks: 2,
+            priority: -10,
+            reuseExistingChunk: true,
+          },
+        },
+      },
+    },
+
     module: {
       rules: [
         // 바벨 loader 구성
