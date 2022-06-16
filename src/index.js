@@ -4,6 +4,14 @@ import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
 
+// React 요소 이런식으로도 가능하구나 react
+// const app = React.createElement(
+//   'div', 
+//   { className: 'app' }, 
+//   'React App 매뉴얼 구성'
+// );
+
+
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <React.StrictMode>
