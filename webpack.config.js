@@ -7,7 +7,7 @@ const os = require('os')
 const CssMinimizerPlugin = require('css-minimizer-webpack-plugin')
 const InterpolateHtmlPlugin = require('interpolate-html-plugin')
 const { CleanWebpackPlugin } = require('clean-webpack-plugin')
-
+const ReactRefreshWebpackPlugin = require('@pmmmwh/react-refresh-webpack-plugin')
 
 module.exports = (_env, argv) => {
   const isProd = argv.mode === 'production'
@@ -32,6 +32,7 @@ module.exports = (_env, argv) => {
       devMiddleware: {
         // dist 디렉토리에 실제 파일 생성
         writeToDisk: true,
+        publicPath: '/public'
       },
       // History 라우팅 대체 사용 설정
       historyApiFallback: true,
@@ -113,7 +114,8 @@ module.exports = (_env, argv) => {
           path.resolve(process.cwd(), 'build/**/*')
         ]
       }),
-    ],
+      isDev && new ReactRefreshWebpackPlugin(),
+    ].filter(Boolean),
     resolve: {
       extensions: ['.js', '.jsx', '.json'],
       alias: {
@@ -177,7 +179,9 @@ module.exports = (_env, argv) => {
                     },
                   }], '@babel/preset-react'
                 ],
-              }
+                plugins: 
+                  [isDev && require.resolve('react-refresh/babel')].filter(Boolean),
+              },
             }
           ]
         },
