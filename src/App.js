@@ -1,7 +1,6 @@
 import logo from './logo.svg';
 import './App.css';
-import React from 'react';
-import { useState } from 'react';
+import React, { useState } from 'react';
 
 function App() {
 
@@ -18,6 +17,9 @@ function App() {
     value: '',
     result: '',
   })
+  // 이렇게 하나의 객체로 묶으면
+  // 몇개의 객체만 수정하고싶을때 prevState로 묶거나 하는등이 필요됨
+
   const inputRef = React.useRef();
 
   const onHandleSubmit = (e) => {
