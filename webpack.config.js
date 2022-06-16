@@ -5,6 +5,7 @@ const HtmlWebpackPlugin = require('html-webpack-plugin')
 const MiniCssExtractPlugin = require('mini-css-extract-plugin')
 const os = require('os')
 const CssMinimizerPlugin = require('css-minimizer-webpack-plugin')
+const InterpolateHtmlPlugin = require('interpolate-html-plugin')
 const { CleanWebpackPlugin } = require('clean-webpack-plugin')
 
 
@@ -70,6 +71,18 @@ module.exports = (_env, argv) => {
     //   }
     // },
     plugins: [
+      // 환경 변수 플러그인 인스턴스 생성 npm i cross-env 설치
+      new webpack.EnvironmentPlugin({
+        NODE_ENV: isDev ? 'development' : 'production'
+      }),
+
+      // 플러그인 인스턴스 생성
+      new HtmlWebpackPlugin({
+        template: getAbsolutePath('public/index.html'),
+        inject: true,
+        favicon: './public/favicon.ico',
+        manifest: './public/manifest.json',
+      }),
       // React 앱에서 "클래스 필드" 문법을 사용하기 위한 플러그인, "동적 가져오기"를 사용하기 위한 플러그인 등을 설치합니다. 
       //  @React 최적화 플러그인 Invalid configuration object. Webpack has been initialized using a configuration object that does not match the API schema.
       // '@babel/plugin-transform-runtime',
@@ -81,16 +94,10 @@ module.exports = (_env, argv) => {
         filename: 'assets/css/[name].[contenthash:8].css',
         chunkFilename: 'assets/css/[name].[contenthash:8].chunk.css',
       }),
-
-      // 환경 변수 플러그인 인스턴스 생성 npm i cross-env 설치
-      new webpack.EnvironmentPlugin({
-        NODE_ENV: isDev ? 'development' : 'production'
-      }),
-
-      // 플러그인 인스턴스 생성
-      new HtmlWebpackPlugin({
-        template: getAbsolutePath('public/index.html'),
-        inject: true
+      // %PUBLIC_URL% 오류 대처하기 위해
+      new InterpolateHtmlPlugin(HtmlWebpackPlugin, {
+        PUBLIC_URL: 'static', // can modify `static` to another name or get it from `process`
+        NODE_ENV: isDev ? 'development' : 'production',
       }),
       // 웹펙 빌드 결과물 정리 플러그인 인스턴스 생성
       new CleanWebpackPlugin({
