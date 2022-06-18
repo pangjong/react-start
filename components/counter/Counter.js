@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 
 // TODO sCU vs memo vs pureComponent
 // https://study-ihl.tistory.com/216
@@ -13,15 +13,24 @@ import React, { useMemo, useState } from 'react';
 //   return counterNum !== nextState.counterNum;
 // };
 
+
 function Counter() {
   const [counterNum, setCounterNum] = useState(0);
 
-  const getCount = () => {
-    return counterNum;
-  }
+  //------ memo
+  // const getCount = () => {
+  //   return counterNum;
+  // }
 
-  const outCount = useMemo(() => getCount, [counterNum]);
-  
+  //const outCount = useMemo(() => getCount, [counterNum]);
+  //---------- memo??
+
+  //------- useEffect
+  // useEffect(() => {
+  //   console.log(counterNum)
+  // }, [counterNum]);
+
+  //-------- useEffect
   const increaseNum = () => {
       setCounterNum(prevCounterNum => prevCounterNum + 1)
   }
@@ -31,11 +40,11 @@ function Counter() {
   }
 
   return(
-    <>
-      <h1>{outCount}</h1>
+    <div>
+      <h1>{counterNum}</h1>
       <button onClick={increaseNum}>+1 </button>
       <button onClick={decreaseNum}>-1</button>
-    </>
+    </div>
   );
 }
 

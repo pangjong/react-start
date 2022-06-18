@@ -100,6 +100,7 @@ module.exports = (_env, argv) => {
         PUBLIC_URL: 'static', // can modify `static` to another name or get it from `process`
         NODE_ENV: isDev ? 'development' : 'production',
       }),
+      isDev && new ReactRefreshWebpackPlugin(),
       // 웹펙 빌드 결과물 정리 플러그인 인스턴스 생성
       new CleanWebpackPlugin({
         // 플러그인 옵션 셜정
@@ -114,7 +115,6 @@ module.exports = (_env, argv) => {
           path.resolve(process.cwd(), 'build/**/*')
         ]
       }),
-      isDev && new ReactRefreshWebpackPlugin(),
     ].filter(Boolean),
     resolve: {
       extensions: ['.js', '.jsx', '.json'],
