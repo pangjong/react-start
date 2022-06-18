@@ -64,16 +64,14 @@ function App() {
   };
 
   return (
-    <div className="App">
-      <header className="App-header">
-        <div> {gugudan.first} 곱하기 {gugudan.second} 는 ?</div>
+    <>
+      <div> {gugudan.first} 곱하기 {gugudan.second} 는 ?</div>
         <form onSubmit={onHandleSubmit}>
           <input ref={inputRef} type="number" value={gugudan.value} onChange={onHandleChange} />
           <button>입력</button>
         </form>
-        <div> {gugudan.result}</div>
-      </header>
-    </div>
+      <div> {gugudan.result}</div>
+    </>
   );
 }
 

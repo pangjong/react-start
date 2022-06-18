@@ -234,7 +234,7 @@ module.exports = (_env, argv) => {
         },
         // 이미지 로더
         {
-          test: /\.(jpe?g|png|gif)$/i,
+          test: /\.(jpe?g|png|gif|ico)$/i,
           use: [
             {
               loader: 'url-loader',
